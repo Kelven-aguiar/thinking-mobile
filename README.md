@@ -1,50 +1,46 @@
-# Welcome to your Expo app 👋
+# Thinking Mobile
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Thinking Mobile é um aplicativo para registro de pensamentos, tarefas e eventos diários, com visualização em calendário. O objetivo é permitir que o usuário registre notas em cada dia, visualizando facilmente os dias com registros através de indicadores visuais (pings) no calendário.
 
-## Get started
+## Funcionalidades
+- Visualização de calendário customizado
+- Indicação visual (ping) nos dias com registros
+- Registro de notas por dia (simulado no frontend)
+- Interface moderna e responsiva
+- Preparado para integração futura com backend e autenticação de usuários
 
-1. Install dependencies
+## Tecnologias Utilizadas
+- React Native
+- Expo
+- TypeScript
+- react-native-calendars
+- Tailwind CSS (via NativeWind)
+- ESLint/Biome para qualidade de código
 
+## Como funciona
+O usuário poderá, em versões futuras, abrir um modal para escrever uma nota. O dia com nota registrada será marcado com um ping vermelho no calendário. Atualmente, os dados são simulados no frontend para facilitar testes e desenvolvimento.
+
+## Estrutura do Projeto
+- `app/components/calendar/CustomCalendar.tsx`: Componente de calendário customizado
+- `app/components/calendar/CustomDay.tsx`: Renderização customizada de cada dia
+- `app/data/DataDay.tsx`: Simulação de dados dos dias com registros
+- `app/index.tsx`: Tela principal do app
+
+## Como rodar
+1. Instale as dependências:
    ```bash
    npm install
    ```
-
-2. Start the app
-
+2. Inicie o projeto:
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+## Futuro
+- Integração com backend para autenticação e armazenamento dos registros
+- Modal para escrita de notas
+- Sincronização multi-dispositivo
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+---
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Desenvolvido por Kelven Aguiar.

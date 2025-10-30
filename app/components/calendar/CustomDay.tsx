@@ -15,16 +15,13 @@ interface CustomDayProps {
     marked?: boolean;
     dotColor?: string;
     customContent?: React.ReactNode;
+    hasPing?: boolean;
+    pingColor?: string;
+    pingHour?: number;
   };
-  customContent?: React.ReactNode;
 }
 
-const CustomDay: React.FC<CustomDayProps> = ({
-  date,
-  state,
-  marking,
-  customContent,
-}) => {
+const CustomDay: React.FC<CustomDayProps> = ({ date, state, marking }) => {
   const isToday = state === 'today';
   const isDisabled = state === 'disabled';
   const dayNumber = date ? date.day : '';
@@ -72,13 +69,27 @@ const CustomDay: React.FC<CustomDayProps> = ({
         <View
           style={{
             flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
+            alignItems: 'flex-end',
             width: '100%',
             paddingHorizontal: 2,
           }}
         >
-          {customContent ? customContent : <View style={{ minHeight: 20 }} />}
+          {marking?.hasPing ? (
+            <View
+              style={{
+                width: 10,
+                height: 10,
+                borderRadius: 5,
+                backgroundColor: marking.pingColor || 'red',
+                marginTop:
+                  marking.pingHour !== undefined
+                    ? 2 + (marking.pingHour / 23) * 50
+                    : 2,
+              }}
+            />
+          ) : (
+            <View style={{ minHeight: 20 }} />
+          )}
         </View>
       </View>
     </TouchableOpacity>

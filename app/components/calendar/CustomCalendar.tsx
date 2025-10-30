@@ -2,6 +2,8 @@ import React from 'react';
 import { View } from 'react-native';
 import type { CalendarProps } from 'react-native-calendars';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
+import { useCalendarEvents } from '../../context/CalendarEventsContext';
+import { CalendarEventsType } from '../../data/DataDay';
 import CustomDay from './CustomDay';
 
 // Configuração opcional de localidade para português
@@ -51,46 +53,19 @@ LocaleConfig.defaultLocale = 'pt-br';
 interface CustomCalendarProps extends CalendarProps {}
 // Removido customEvents das props, pois agora será gerado internamente
 const CustomCalendar: React.FC<CustomCalendarProps> = ({ ...rest }) => {
-  // Simulação de dados vindos do backend
-  const markedDates: {
-    [date: string]: {
-      customContent?: React.ReactNode;
-      marked?: boolean;
-      dotColor?: string;
-    };
-  } = {
-    '2025-10-30': {
-      customContent: (
-        <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-          <View
-            style={{
-              width: 10,
-              height: 10,
-              borderRadius: 5,
-              backgroundColor: 'red',
-              marginTop: 2,
-            }}
-          />
-        </View>
-      ),
-      marked: true,
-      dotColor: 'red',
-    },
-    // Adicione outros dias simulados aqui
-  };
+  // Consumir dados do contexto
+  const markedDates: CalendarEventsType = useCalendarEvents();
 
   return (
     <View style={{ width: '100%', paddingHorizontal: 4 }}>
       <Calendar
         dayComponent={({ date, state, marking }) => {
           const eventData = markedDates[date?.dateString || ''];
-          const dayCustomContent = eventData?.customContent;
           return (
             <CustomDay
               date={date}
               state={state as '' | 'disabled' | 'today' | undefined}
               marking={marking || eventData}
-              customContent={dayCustomContent}
             />
           );
         }}

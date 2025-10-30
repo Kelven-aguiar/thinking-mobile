@@ -1,21 +1,19 @@
-import { View } from 'react-native';
+export type CalendarEvent = {
+  hasPing?: boolean;
+  pingColor?: string;
+  marked?: boolean;
+  pingHour?: number;
+};
 
-export const customEvents = {
+export type CalendarEventsType = {
+  [date: string]: CalendarEvent;
+};
+
+export const customEvents: CalendarEventsType = {
   '2025-10-30': {
-    customContent: (
-      <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-        <View
-          style={{
-            width: 10,
-            height: 10,
-            borderRadius: 5,
-            backgroundColor: 'red',
-            marginTop: 2,
-          }}
-        />
-      </View>
-    ),
+    hasPing: true,
+    pingColor: 'red',
     marked: true,
-    dotColor: 'red',
+    pingHour: 0,
   },
 };
