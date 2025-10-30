@@ -1,16 +1,89 @@
-import React, { createContext, useContext } from 'react';
-import { CalendarEventsType, customEvents } from '../data/DataDay';
+import React, { createContext, useCallback, useContext, useState } from 'react';
+import type { CalendarEventsType, Ping } from '../data/DataDay';
+import { customEvents } from '../data/DataDay';
+import {
+  addPing as addPingUtil,
+  getPingsForDate,
+  removePing as removePingUtil,
+  updatePing as updatePingUtil,
+} from '../utils/pingUtils';
 
-const CalendarEventsContext = createContext<CalendarEventsType>(customEvents);
+interface CalendarEventsContextType {
+  events: CalendarEventsType;
+  addPing: (dateString: string, ping: Omit<Ping, 'id' | 'timestamp'>) => void;
+  removePing: (dateString: string, pingId: string) => void;
+  updatePing: (
+    dateString: string,
+    pingId: string,
+    updates: Partial<Omit<Ping, 'id'>>
+  ) => void;
+  getPings: (dateString: string) => Ping[];
+}
+
+const CalendarEventsContext = createContext<
+  CalendarEventsContextType | undefined
+>(undefined);
 
 export const CalendarEventsProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
+  const [events, setEvents] = useState<CalendarEventsType>(customEvents);
+
+  const addPing = useCallback(
+    (dateString: string, ping: Omit<Ping, 'id' | 'timestamp'>) => {
+      setEvents((prevEvents) => addPingUtil(prevEvents, dateString, ping));
+    },
+    []
+  );
+
+  const removePing = useCallback((dateString: string, pingId: string) => {
+    setEvents((prevEvents) => removePingUtil(prevEvents, dateString, pingId));
+  }, []);
+
+  const updatePing = useCallback(
+    (
+      dateString: string,
+      pingId: string,
+      updates: Partial<Omit<Ping, 'id'>>
+    ) => {
+      setEvents((prevEvents) =>
+        updatePingUtil(prevEvents, dateString, pingId, updates)
+      );
+    },
+    []
+  );
+
+  const getPings = useCallback(
+    (dateString: string) => {
+      return getPingsForDate(events, dateString);
+    },
+    [events]
+  );
+
+  const value = React.useMemo(
+    () => ({
+      events,
+      addPing,
+      removePing,
+      updatePing,
+      getPings,
+    }),
+    [events, addPing, removePing, updatePing, getPings]
+  );
+
   return (
-    <CalendarEventsContext.Provider value={customEvents}>
+    <CalendarEventsContext.Provider value={value}>
       {children}
     </CalendarEventsContext.Provider>
   );
 };
 
-export const useCalendarEvents = () => useContext(CalendarEventsContext);
+export const useCalendarEvents = () => {
+  const context = useContext(CalendarEventsContext);
+  if (context === undefined) {
+    throw new Error(
+      'useCalendarEvents must be used within a CalendarEventsProvider'
+    );
+  }
+  return context;
+};
