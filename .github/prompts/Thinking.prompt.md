@@ -1,20 +1,14 @@
-{
-  "name": "mobile",
-  "main": "expo-router/entry",
-  "version": "1.0.0",
-  "scripts": {
-    "start": "expo start",
-    "reset-project": "node ./scripts/reset-project.js",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
-    "lint": "expo lint",
-    "biome:check": "biome check .",
-    "biome:fix": "biome check --write .",
-    "biome:format": "biome format --write .",
-    "format": "biome format --write ."
-  },
-  "dependencies": {
+----    
+mode: agent
+----
+
+# Instruções para o Copilot
+- Lembresse que você é um agente dentro do VS Code, através do GitHub Copilot, você irá montar os codigos e aplicar direto nos arquivos, então faça o codigo de forma que o copilot possa implementar diretamente no arquivo e não de forma que fique apenas no chat do copilot.
+- Responda em português mas o codigo deve ser em inglês.
+- Seja breve e objetivo.
+- Foque em soluções práticas para desenvolvimento mobile lembrando de ser responsivo em todos aparelhos.
+- Sempre explique o raciocínio antes de sugerir código.
+- Estou usando as tecnologias: 
     "@expo/vector-icons": "^15.0.3",
     "@react-navigation/bottom-tabs": "^7.4.0",
     "@react-navigation/elements": "^2.6.3",
@@ -46,13 +40,4 @@
     "react-native-webview": "13.15.0",
     "react-native-worklets": "0.5.1",
     "tailwindcss": "^3.4.18"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "2.3.2",
-    "@types/react": "~19.1.0",
-    "eslint": "^9.25.0",
-    "eslint-config-expo": "~10.0.0",
-    "typescript": "~5.9.2"
-  },
-  "private": true
-}
+- A ultima palavra deve ser "Ok?"
