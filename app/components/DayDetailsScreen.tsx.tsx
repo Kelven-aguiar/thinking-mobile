@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   Modal,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
@@ -23,10 +22,18 @@ const DayDetailsScreen: React.FC<DayDetailsScreenProps> = ({
 }) => {
   const { getPings, addPing, removePing, updatePing } = useCalendarEvents();
   const [isAddingPing, setIsAddingPing] = useState(false);
-  const [editingPingId, setEditingPingId] = useState<string | null>(null);
   const [newPingColor, setNewPingColor] = useState('#3b82f6');
   const [newPingHour, setNewPingHour] = useState('');
   const [newPingMinute, setNewPingMinute] = useState('');
+  const [newPingAnnotation, setNewPingAnnotation] = useState('');
+
+  // Estado para altura dinâmica dos TextInputs de cada ping
+  const [pingInputHeights, setPingInputHeights] = useState<
+    Record<string, number>
+  >({});
+  // Estado para altura dinâmica do input de nova anotação
+  const [newPingAnnotationHeight, setNewPingAnnotationHeight] =
+    useState<number>(0);
 
   const pings = getPings(selectedDate);
   const sortedPings = [...pings].sort((a, b) => a.timestamp - b.timestamp);
@@ -45,16 +52,22 @@ const DayDetailsScreen: React.FC<DayDetailsScreenProps> = ({
         color: newPingColor,
         hour,
         minute,
+        annotation: newPingAnnotation,
         metadata: {},
       });
       setNewPingHour('');
       setNewPingMinute('');
+      setNewPingAnnotation('');
       setIsAddingPing(false);
     }
   };
 
   const handleDeletePing = (pingId: string) => {
     removePing(selectedDate, pingId);
+  };
+
+  const handleUpdateAnnotation = (pingId: string, annotation: string) => {
+    updatePing(selectedDate, pingId, { annotation });
   };
 
   const predefinedColors = [
@@ -70,308 +83,169 @@ const DayDetailsScreen: React.FC<DayDetailsScreenProps> = ({
   return (
     <Modal
       visible={visible}
-      animationType="slide"
-      transparent={true}
+      animationType="fade"
+      transparent={false}
       onRequestClose={onClose}
     >
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
-          {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.title}>Anotações do Dia</Text>
-            <Text style={styles.dateText}>{formatDate(selectedDate)}</Text>
-            <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-              <Text style={styles.closeButtonText}>✕</Text>
+      <View className="flex-1 bg-white">
+        {/* Header */}
+        <View className="pt-2 pb-5 px-5 bg-gray-50 border-b border-gray-200">
+          <View className="flex-row items-center justify-between">
+            <View className="flex-1 items-center">
+              <Text className="text-lg text-gray-600">
+                {formatDate(selectedDate)}
+              </Text>
+            </View>
+            <TouchableOpacity className="ml-3" onPress={onClose}>
+              <Text className="text-base text-blue-600 font-semibold">
+                ← Voltar
+              </Text>
             </TouchableOpacity>
           </View>
+        </View>
 
-          {/* Lista de Pings */}
-          <ScrollView style={styles.pingsList}>
-            {sortedPings.length === 0 ? (
-              <View style={styles.emptyState}>
-                <Text style={styles.emptyText}>
-                  Nenhuma anotação para este dia
-                </Text>
-              </View>
-            ) : (
-              sortedPings.map((ping) => (
-                <View key={ping.id} style={styles.pingItem}>
-                  <View
-                    style={[
-                      styles.pingColorIndicator,
-                      { backgroundColor: ping.color },
-                    ]}
-                  />
-                  <View style={styles.pingContent}>
-                    <Text style={styles.pingTime}>
-                      {String(ping.hour).padStart(2, '0')}:
-                      {String(ping.minute || 0).padStart(2, '0')}
-                    </Text>
-                    {ping.annotation && (
-                      <Text style={styles.pingAnnotation}>
-                        {ping.annotation}
-                      </Text>
-                    )}
-                  </View>
-                  <TouchableOpacity
-                    style={styles.deleteButton}
-                    onPress={() => handleDeletePing(ping.id)}
-                  >
-                    <Text style={styles.deleteButtonText}>🗑️</Text>
-                  </TouchableOpacity>
-                </View>
-              ))
-            )}
-          </ScrollView>
-
-          {/* Formulário de Adicionar Ping */}
-          {isAddingPing ? (
-            <View style={styles.addPingForm}>
-              <Text style={styles.formTitle}>Nova Anotação</Text>
-
-              {/* Seletor de Cor */}
-              <View style={styles.colorSelector}>
-                {predefinedColors.map((colorOption) => (
-                  <TouchableOpacity
-                    key={colorOption.color}
-                    style={[
-                      styles.colorOption,
-                      { backgroundColor: colorOption.color },
-                      newPingColor === colorOption.color &&
-                        styles.colorOptionSelected,
-                    ]}
-                    onPress={() => setNewPingColor(colorOption.color)}
-                  />
-                ))}
-              </View>
-
-              {/* Input de Hora */}
-              <View style={styles.timeInputContainer}>
-                <TextInput
-                  style={styles.timeInput}
-                  placeholder="Hora (0-23)"
-                  keyboardType="numeric"
-                  value={newPingHour}
-                  onChangeText={setNewPingHour}
-                  maxLength={2}
-                />
-                <Text style={styles.timeSeparator}>:</Text>
-                <TextInput
-                  style={styles.timeInput}
-                  placeholder="Min (0-59)"
-                  keyboardType="numeric"
-                  value={newPingMinute}
-                  onChangeText={setNewPingMinute}
-                  maxLength={2}
-                />
-              </View>
-
-              {/* Botões */}
-              <View style={styles.formButtons}>
-                <TouchableOpacity
-                  style={[styles.button, styles.cancelButton]}
-                  onPress={() => {
-                    setIsAddingPing(false);
-                    setNewPingHour('');
-                    setNewPingMinute('');
-                  }}
-                >
-                  <Text style={styles.cancelButtonText}>Cancelar</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.button, styles.saveButton]}
-                  onPress={handleAddPing}
-                >
-                  <Text style={styles.saveButtonText}>Salvar</Text>
-                </TouchableOpacity>
-              </View>
+        {/* Lista de Pings */}
+        <ScrollView className="flex-1 px-5 pt-5">
+          {sortedPings.length === 0 ? (
+            <View className="py-10 items-center">
+              <Text className="text-base text-gray-400 text-center">
+                Nenhuma anotação para este dia
+              </Text>
             </View>
           ) : (
-            <TouchableOpacity
-              style={styles.addButton}
-              onPress={() => setIsAddingPing(true)}
-            >
-              <Text style={styles.addButtonText}>+ Adicionar Anotação</Text>
-            </TouchableOpacity>
+            sortedPings.map((ping) => (
+              <View
+                key={ping.id}
+                className="flex flex-col bg-gray-50 rounded-xl p-4 mb-3"
+              >
+                <View className="flex-row items-center">
+                  <View
+                    className="w-3 h-3 rounded-full mr-3"
+                    style={{ backgroundColor: ping.color }}
+                  />
+                  <Text className="text-lg font-semibold text-gray-800">
+                    {String(ping.hour).padStart(2, '0')}:
+                    {String(ping.minute || 0).padStart(2, '0')}
+                  </Text>
+                  <TouchableOpacity
+                    className="ml-auto p-2"
+                    onPress={() => handleDeletePing(ping.id)}
+                  >
+                    <Text className="text-xl">🗑️</Text>
+                  </TouchableOpacity>
+                </View>
+                <TextInput
+                  className="bg-white rounded-lg p-3 text-base text-gray-800 border border-gray-200 mt-2"
+                  style={{
+                    minHeight: 40,
+                    height: Math.max(40, pingInputHeights[ping.id] || 40),
+                  }}
+                  placeholder="Escreva seu pensamento aqui..."
+                  placeholderTextColor="#9ca3af"
+                  multiline
+                  scrollEnabled={false}
+                  value={ping.annotation || ''}
+                  onChangeText={(text) => handleUpdateAnnotation(ping.id, text)}
+                  onContentSizeChange={(e) => {
+                    const height = e.nativeEvent.contentSize.height;
+                    setPingInputHeights((prev) => ({
+                      ...prev,
+                      [ping.id]: height,
+                    }));
+                  }}
+                  textAlignVertical="top"
+                />
+              </View>
+            ))
           )}
-        </View>
+        </ScrollView>
+
+        {/* Formulário de Adicionar Ping */}
+        {isAddingPing ? (
+          <View className="bg-gray-50 rounded-xl p-4 mx-5 mb-5">
+            <Text className="text-lg font-semibold text-gray-800 mb-4">
+              Nova Anotação
+            </Text>
+
+            {/* Seletor de Cor */}
+            <View className="flex-row justify-between mb-4">
+              {predefinedColors.map((colorOption) => (
+                <TouchableOpacity
+                  key={colorOption.color}
+                  className={`w-10 h-10 rounded-full border-2 ${newPingColor === colorOption.color ? 'border-gray-800' : 'border-transparent'}`}
+                  style={{ backgroundColor: colorOption.color }}
+                  onPress={() => setNewPingColor(colorOption.color)}
+                />
+              ))}
+            </View>
+
+            {/* Input de Hora */}
+            <View className="flex-row items-center justify-center mb-4">
+              <TextInput
+                className="bg-white rounded-lg p-3 text-lg w-20 text-center border border-gray-200"
+                placeholder="Hora (0-23)"
+                keyboardType="numeric"
+                value={newPingHour}
+                onChangeText={setNewPingHour}
+                maxLength={2}
+              />
+              <Text className="text-2xl font-bold mx-2 text-gray-800">:</Text>
+              <TextInput
+                className="bg-white rounded-lg p-3 text-lg w-20 text-center border border-gray-200"
+                placeholder="Min (0-59)"
+                keyboardType="numeric"
+                value={newPingMinute}
+                onChangeText={setNewPingMinute}
+                maxLength={2}
+              />
+            </View>
+
+            {/* Input de Anotação */}
+            <TextInput
+              className="bg-white rounded-lg p-3 text-base text-gray-800 border border-gray-200 min-h-[100px] mt-2"
+              placeholder="Escreva seu pensamento aqui..."
+              placeholderTextColor="#9ca3af"
+              multiline
+              numberOfLines={4}
+              value={newPingAnnotation}
+              onChangeText={setNewPingAnnotation}
+              textAlignVertical="top"
+            />
+
+            {/* Botões */}
+            <View className="flex-row gap-3 mt-4">
+              <TouchableOpacity
+                className="flex-1 rounded-lg p-3 items-center bg-white border border-gray-200"
+                onPress={() => {
+                  setIsAddingPing(false);
+                  setNewPingHour('');
+                  setNewPingMinute('');
+                  setNewPingAnnotation('');
+                }}
+              >
+                <Text className="text-gray-500 font-semibold">Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="flex-1 rounded-lg p-3 items-center bg-blue-600"
+                onPress={handleAddPing}
+              >
+                <Text className="text-white font-semibold">Salvar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ) : (
+          <TouchableOpacity
+            className="bg-blue-600 rounded-xl p-4 items-center mx-5 mb-5"
+            onPress={() => setIsAddingPing(true)}
+          >
+            <Text className="text-white text-lg font-semibold">
+              + Adicionar Anotação
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
     </Modal>
   );
 };
-
-const styles = StyleSheet.create({
-  pingAnnotation: {
-    fontSize: 15,
-    color: '#374151',
-    marginTop: 4,
-    fontStyle: 'italic',
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingTop: 20,
-    paddingHorizontal: 20,
-    paddingBottom: 40,
-    maxHeight: '80%',
-  },
-  header: {
-    marginBottom: 20,
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1f2937',
-    marginBottom: 8,
-  },
-  dateText: {
-    fontSize: 16,
-    color: '#6b7280',
-  },
-  closeButton: {
-    position: 'absolute',
-    right: 0,
-    top: 0,
-    padding: 8,
-  },
-  closeButtonText: {
-    fontSize: 24,
-    color: '#6b7280',
-  },
-  pingsList: {
-    maxHeight: 300,
-    marginBottom: 20,
-  },
-  emptyState: {
-    padding: 40,
-    alignItems: 'center',
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#9ca3af',
-    textAlign: 'center',
-  },
-  pingItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f9fafb',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-  },
-  pingColorIndicator: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    marginRight: 12,
-  },
-  pingContent: {
-    flex: 1,
-  },
-  pingTime: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#1f2937',
-  },
-  deleteButton: {
-    padding: 8,
-  },
-  deleteButtonText: {
-    fontSize: 20,
-  },
-  addButton: {
-    backgroundColor: '#3b82f6',
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-  },
-  addButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  addPingForm: {
-    backgroundColor: '#f9fafb',
-    borderRadius: 12,
-    padding: 16,
-  },
-  formTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#1f2937',
-    marginBottom: 16,
-  },
-  colorSelector: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 16,
-  },
-  colorOption: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-  colorOptionSelected: {
-    borderColor: '#1f2937',
-    borderWidth: 3,
-  },
-  timeInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 16,
-  },
-  timeInput: {
-    backgroundColor: 'white',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 18,
-    width: 80,
-    textAlign: 'center',
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-  },
-  timeSeparator: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginHorizontal: 8,
-    color: '#1f2937',
-  },
-  formButtons: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  button: {
-    flex: 1,
-    borderRadius: 8,
-    padding: 12,
-    alignItems: 'center',
-  },
-  cancelButton: {
-    backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-  },
-  cancelButtonText: {
-    color: '#6b7280',
-    fontWeight: '600',
-  },
-  saveButton: {
-    backgroundColor: '#3b82f6',
-  },
-  saveButtonText: {
-    color: 'white',
-    fontWeight: '600',
-  },
-});
 
 export default DayDetailsScreen;
