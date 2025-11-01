@@ -1,9 +1,9 @@
 import { SafeAreaView, View } from 'react-native';
 import '../global.css';
-import MicrofoneButton from './components/buttons/MicrofoneButton';
-import TextButton from './components/buttons/TextButton';
-import CalendarWithWeekView from './components/calendar/CalendarWithWeekView';
-import { CalendarEventsProvider } from './context/CalendarEventsContext';
+import MicrofoneButton from '../src/components/buttons/MicrofoneButton';
+import TextButton from '../src/components/buttons/TextButton';
+import CalendarWithWeekView from '../src/components/calendar/CalendarWithWeekView';
+import { CalendarEventsProvider } from '../src/context/CalendarEventsContext';
 
 export default function App() {
   return (

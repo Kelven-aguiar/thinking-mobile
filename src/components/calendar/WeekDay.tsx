@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import type { DateData } from 'react-native-calendars';
-import type { Ping } from '../../data/DataDay';
+import type { Ping } from '../../utils/DataDay';
 
 interface WeekDayProps {
   date: Date;

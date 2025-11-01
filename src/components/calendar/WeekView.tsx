@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import type { DateData } from 'react-native-calendars';
-import { useCalendarEvents } from '../../context/CalendarEventsContext';
+import { useCalendarEvents } from '../../../src/context/CalendarEventsContext';
 import WeekDay from './WeekDay';
 
 interface WeekViewProps {

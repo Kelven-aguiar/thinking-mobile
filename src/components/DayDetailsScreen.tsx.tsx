@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useCalendarEvents } from '../context/CalendarEventsContext';
+import { useCalendarEvents } from '../../src/context/CalendarEventsContext';
 
 interface DayDetailsScreenProps {
   selectedDate: string; // formato: 'YYYY-MM-DD'

@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import type { CalendarProps, DateData } from 'react-native-calendars';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
-import { useCalendarEvents } from '../../context/CalendarEventsContext';
+import { useCalendarEvents } from '../../../src/context/CalendarEventsContext';
 import CustomDay from './CustomDay';
 
 // Configuração opcional de localidade para português

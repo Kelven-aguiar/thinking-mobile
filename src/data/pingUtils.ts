@@ -1,4 +1,4 @@
-import type { CalendarEventsType, Ping } from '../data/DataDay';
+import type { CalendarEventsType, Ping } from '../utils/DataDay';
 
 /**
  * Gera um ID único para um ping
