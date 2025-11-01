@@ -1,12 +1,12 @@
 import React, { createContext, useCallback, useContext, useState } from 'react';
+import type { CalendarEventsType, Ping } from '../data/DataDay';
+import { customEvents } from '../data/DataDay';
 import {
   addPing as addPingUtil,
   getPingsForDate,
   removePing as removePingUtil,
   updatePing as updatePingUtil,
-} from '../data/pingUtils';
-import type { CalendarEventsType, Ping } from '../utils/DataDay';
-import { customEvents } from '../utils/DataDay';
+} from '../utils/pingUtils';
 
 interface CalendarEventsContextType {
   events: CalendarEventsType;
